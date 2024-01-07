@@ -1,3 +1,4 @@
+import { createDiffieHellmanGroup } from 'crypto';
 import fs from 'fs';
 import { findSourceMap } from 'module';
 import { type } from 'os';
@@ -16,15 +17,41 @@ console.log("Example:", part1(input1));
 
 
 function part1(almanac){
-    let min_location = Number.MAX_VALUE;
-    console.log(almanac);
+    let seeds = almanac[0].split(':')[1];
+    seeds = seeds.trim().split(' ');
+    seeds = seeds.map(seed =>{
+        return {seed: Number(seed), changed: false}
+    });
+    
+    
+    for(let i=1; i < almanac.length; i++){
+        if (almanac[i] != '' && isNaN(almanac[i][0])) {
+            //Tenemos categoría 
+            
+            //Ahora guardamos un objeto por cada i siguiente que sea un mapeo
+            for(i=i+1; i < almanac.length && !isNaN(almanac[i][0]); i++){
+                let numbers = almanac[i].split(' ').map(Number);
+                seeds = seeds.map(seed => {
+                    if(seed.seed >= numbers[1] && seed.seed < numbers[1]+numbers[2] && !seed.changed){
+                        return {seed: numbers[0] + Math.abs(seed.seed - (numbers[1]+numbers[2])) , changed: true};
+                    } else {
+                        return seed;
+                    }
+                })
+                console.log(i);
+                console.log(seeds);
+            }
 
-    let categories_map;
-    for(i=1; i < almanac.length; i++){
-        
+            seeds = seeds.map(seed => {
+                return {seed: seed.seed, changed: false};
+            })
+            
+            
+
+        }
     }
 
-    return min_location;
+    return 0;
 }
 
 
